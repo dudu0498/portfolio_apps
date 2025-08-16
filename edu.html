@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLearn - Online Learning Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4ade80;
+            --warning: #facc15;
+            --danger: #f87171;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        nav ul li a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(67, 97, 238, 0.9), rgba(63, 55, 201, 0.9)), url('https://placehold.co/1200x600/4361ee/ffffff?text=Learn+Anything') no-repeat center center/cover;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .search-bar {
+            display: flex;
+            max-width: 600px;
+            margin: 30px auto;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-bar button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Categories Section */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-align: center;
+            padding: 30px 20px;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .category-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        /* Courses Section */
+        .courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-image {
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .course-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-badge {
+            display: inline-block;
+            background: var(--light-gray);
+            color: var(--gray);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .course-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .course-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--light-gray);
+            padding-top: 15px;
+        }
+
+        .course-rating {
+            color: var(--warning);
+        }
+
+        .course-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* Search Results Section */
+        .search-results {
+            display: none;
+            padding: 40px 0;
+        }
+
+        .search-results-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-results-header h2 {
+            font-size: 2rem;
+            color: var(--dark);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: var(--gray);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+
+        /* Category Courses Section */
+        .category-courses {
+            display: none;
+            padding: 40px 0;
+        }
+
+        .category-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-header h2 {
+            font-size: 2rem;
+            color: var(--dark);
+        }
+
+        .back-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background: white;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .testimonial-content::before {
+            content: """;
+            font-size: 4rem;
+            position: absolute;
+            top: -20px;
+            left: -15px;
+            color: var(--light-gray);
+            font-family: Georgia, serif;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column ul li a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .search-bar {
+                flex-direction: column;
+                border-radius: 15px;
+            }
+
+            .search-bar input,
+            .search-bar button {
+                width: 100%;
+                border-radius: 0;
+                padding: 15px;
+            }
+
+            .search-bar button {
+                border-radius: 0 0 15px 15px;
+            }
+            
+            .search-results-header,
+            .category-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn {
+                flex: 1;
+                max-width: 150px;
+            }
+
+            .section {
+                padding: 50px 0;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduLearn</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#courses">Courses</a></li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <button class="btn btn-outline">Log In</button>
+                <button class="btn btn-primary">Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-content">
+            <h1>Learn New Skills Online with Expert Instructors</h1>
+            <p>Join millions of learners and start building your career today. Choose from over 185,000 courses taught by expert instructors.</p>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="What do you want to learn?">
+                <button id="search-button">Search</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Results Section -->
+    <section class="search-results" id="search-results">
+        <div class="container">
+            <div class="search-results-header">
+                <h2>Search Results</h2>
+                <p id="results-count"></p>
+            </div>
+            <div class="courses" id="search-results-container">
+                <!-- Search results will be populated here -->
+            </div>
+            <div class="no-results" id="no-results-message">
+                <i class="fas fa-search"></i>
+                <h3>No courses found</h3>
+                <p>Try searching for something else</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Courses Section -->
+    <section class="category-courses" id="category-courses">
+        <div class="container">
+            <div class="category-header">
+                <h2 id="category-title">Category Courses</h2>
+                <button class="back-button" id="back-to-courses">Back to All Courses</button>
+            </div>
+            <div class="courses" id="category-courses-container">
+                <!-- Category courses will be populated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="section" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <h2>Browse Categories</h2>
+                <p>Discover courses by exploring our top categories</p>
+            </div>
+            <div class="categories" id="categories-container">
+                <!-- Categories will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="section" id="courses">
+        <div class="container">
+            <div class="section-header">
+                <h2>All Courses</h2>
+                <p>Explore our complete collection of courses</p>
+            </div>
+            <div class="courses" id="all-courses">
+                <!-- All courses will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose EduLearn?</h2>
+                <p>We provide the best learning experience for our students</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3>Expert Instructors</h3>
+                    <p>Learn from industry professionals with years of experience.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>Certified Courses</h3>
+                    <p>Get recognized certificates upon course completion.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Learn Anywhere</h3>
+                    <p>Access courses on any device, anytime, anywhere.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Student Testimonials</h2>
+                <p>Hear what our students have to say about their learning experience</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        EduLearn transformed my career. The courses are well-structured and the instructors are incredibly knowledgeable. I went from a beginner to landing a developer job in just 6 months!
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SJ</div>
+                        <div>
+                            <h4>Sarah Johnson</h4>
+                            <p>Web Developer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        The UI/UX design course was exactly what I needed. The practical projects helped me build a strong portfolio. I've already started freelancing and getting clients!
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MR</div>
+                        <div>
+                            <h4>Michael Roberts</h4>
+                            <p>UI/UX Designer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        As a busy professional, I appreciate the flexibility of learning at my own pace. The mobile app makes it easy to study during my commute. Highly recommended!
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">EP</div>
+                        <div>
+                            <h4>Emma Patel</h4>
+                            <p>Marketing Manager</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>EduLearn</h3>
+                    <p>Empowering learners worldwide with high-quality online education since 2015.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#courses">Courses</a></li>
+                        <li><a href="#categories">Categories</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><a href="#">Web Development</a></li>
+                        <li><a href="#">Data Science</a></li>
+                        <li><a href="#">Mobile Development</a></li>
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Design</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Education St, Learning City</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> info@edulearn.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 EduLearn. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Course data with 28 courses
+        const courses = [
+            {
+                id: 1,
+                title: "JavaScript for Beginners",
+                description: "Learn the fundamentals of JavaScript programming with hands-on projects.",
+                category: "Development",
+                level: "Beginner",
+                price: 49.99,
+                rating: 4.7,
+                icon: "fab fa-js"
+            },
+            {
+                id: 2,
+                title: "React - The Complete Guide",
+                description: "Master React and build powerful web applications with hooks and context.",
+                category: "Development",
+                level: "Intermediate",
+                price: 79.99,
+                rating: 4.9,
+                icon: "fab fa-react"
+            },
+            {
+                id: 3,
+                title: "UI/UX Design Masterclass",
+                description: "Learn design principles and create beautiful user interfaces.",
+                category: "Design",
+                level: "All Levels",
+                price: 59.99,
+                rating: 4.6,
+                icon: "fas fa-palette"
+            },
+            {
+                id: 4,
+                title: "SQL for Data Analysis",
+                description: "Master SQL queries and database management for data analysis.",
+                category: "Data Science",
+                level: "Advanced",
+                price: 69.99,
+                rating: 4.3,
+                icon: "fas fa-database"
+            },
+            {
+                id: 5,
+                title: "Flutter Mobile Development",
+                description: "Build cross-platform mobile apps with Flutter and Dart.",
+                category: "Development",
+                level: "Beginner",
+                price: 74.99,
+                rating: 4.8,
+                icon: "fas fa-mobile-alt"
+            },
+            {
+                id: 6,
+                title: "Python for Data Science",
+                description: "Learn Python libraries for data analysis and visualization.",
+                category: "Data Science",
+                level: "Intermediate",
+                price: 89.99,
+                rating: 4.9,
+                icon: "fas fa-chart-pie"
+            },
+            {
+                id: 7,
+                title: "Digital Marketing Fundamentals",
+                description: "Master the essentials of digital marketing and online advertising.",
+                category: "Business",
+                level: "Beginner",
+                price: 54.99,
+                rating: 4.5,
+                icon: "fas fa-bullhorn"
+            },
+            {
+                id: 8,
+                title: "Machine Learning with Python",
+                description: "Build and deploy machine learning models using Python.",
+                category: "Data Science",
+                level: "Advanced",
+                price: 99.99,
+                rating: 4.8,
+                icon: "fas fa-robot"
+            },
+            {
+                id: 9,
+                title: "Node.js Backend Development",
+                description: "Build scalable server-side applications with Node.js and Express.",
+                category: "Development",
+                level: "Intermediate",
+                price: 79.99,
+                rating: 4.7,
+                icon: "fab fa-node-js"
+            },
+            {
+                id: 10,
+                title: "Adobe Photoshop Masterclass",
+                description: "Learn professional photo editing and graphic design techniques.",
+                category: "Design",
+                level: "All Levels",
+                price: 49.99,
+                rating: 4.6,
+                icon: "fas fa-camera-retro"
+            },
+            {
+                id: 11,
+                title: "Business Strategy Fundamentals",
+                description: "Develop strategic thinking and business planning skills.",
+                category: "Business",
+                level: "Intermediate",
+                price: 64.99,
+                rating: 4.4,
+                icon: "fas fa-chart-line"
+            },
+            {
+                id: 12,
+                title: "iOS App Development with Swift",
+                description: "Create stunning iOS applications using Swift programming language.",
+                category: "Development",
+                level: "Beginner",
+                price: 84.99,
+                rating: 4.8,
+                icon: "fab fa-apple"
+            },
+            {
+                id: 13,
+                title: "Figma UI Design Course",
+                description: "Master Figma for creating modern user interfaces and prototypes.",
+                category: "Design",
+                level: "Beginner",
+                price: 44.99,
+                rating: 4.7,
+                icon: "fas fa-pencil-ruler"
+            },
+            {
+                id: 14,
+                title: "Financial Planning and Analysis",
+                description: "Learn financial management and investment strategies for businesses.",
+                category: "Business",
+                level: "Advanced",
+                price: 89.99,
+                rating: 4.6,
+                icon: "fas fa-money-bill-wave"
+            },
+            {
+                id: 15,
+                title: "Vue.js Frontend Framework",
+                description: "Build reactive web interfaces with the Vue.js framework.",
+                category: "Development",
+                level: "Intermediate",
+                price: 69.99,
+                rating: 4.5,
+                icon: "fab fa-vuejs"
+            },
+            {
+                id: 16,
+                title: "3D Modeling with Blender",
+                description: "Create stunning 3D models and animations with Blender software.",
+                category: "Design",
+                level: "Beginner",
+                price: 59.99,
+                rating: 4.8,
+                icon: "fas fa-cube"
+            },
+            {
+                id: 17,
+                title: "Project Management Professional",
+                description: "Master project planning, execution, and management techniques.",
+                category: "Business",
+                level: "All Levels",
+                price: 74.99,
+                rating: 4.7,
+                icon: "fas fa-tasks"
+            },
+            {
+                id: 18,
+                title: "Cybersecurity Fundamentals",
+                description: "Learn essential cybersecurity concepts and protection techniques.",
+                category: "Development",
+                level: "Intermediate",
+                price: 89.99,
+                rating: 4.9,
+                icon: "fas fa-shield-alt"
+            },
+            {
+                id: 19,
+                title: "Motion Graphics with After Effects",
+                description: "Create professional motion graphics and visual effects.",
+                category: "Design",
+                level: "Intermediate",
+                price: 69.99,
+                rating: 4.6,
+                icon: "fas fa-film"
+            },
+            {
+                id: 20,
+                title: "Entrepreneurship and Startup",
+                description: "Learn how to launch and grow your own successful business.",
+                category: "Business",
+                level: "Beginner",
+                price: 59.99,
+                rating: 4.8,
+                icon: "fas fa-lightbulb"
+            },
+            {
+                id: 21,
+                title: "Angular Complete Guide",
+                description: "Master Angular framework for building dynamic web applications.",
+                category: "Development",
+                level: "Advanced",
+                price: 84.99,
+                rating: 4.7,
+                icon: "fab fa-angular"
+            },
+            {
+                id: 22,
+                title: "Illustrator Vector Design",
+                description: "Create professional vector graphics and illustrations.",
+                category: "Design",
+                level: "Beginner",
+                price: 49.99,
+                rating: 4.5,
+                icon: "fas fa-draw-polygon"
+            },
+            {
+                id: 23,
+                title: "Business Analytics with Excel",
+                description: "Master data analysis and visualization using Excel tools.",
+                category: "Business",
+                level: "Intermediate",
+                price: 54.99,
+                rating: 4.4,
+                icon: "fas fa-table"
+            },
+            {
+                id: 24,
+                title: "Kotlin for Android Development",
+                description: "Build modern Android apps using Kotlin programming language.",
+                category: "Development",
+                level: "Beginner",
+                price: 69.99,
+                rating: 4.8,
+                icon: "fab fa-android"
+            },
+            {
+                id: 25,
+                title: "InDesign Layout Design",
+                description: "Create professional layouts for print and digital media.",
+                category: "Design",
+                level: "Intermediate",
+                price: 54.99,
+                rating: 4.6,
+                icon: "fas fa-book"
+            },
+            {
+                id: 26,
+                title: "Leadership and Management",
+                description: "Develop essential leadership skills for team management.",
+                category: "Business",
+                level: "Advanced",
+                price: 79.99,
+                rating: 4.7,
+                icon: "fas fa-user-tie"
+            },
+            {
+                id: 27,
+                title: "Docker and Kubernetes",
+                description: "Master containerization and orchestration technologies.",
+                category: "Development",
+                level: "Advanced",
+                price: 94.99,
+                rating: 4.9,
+                icon: "fab fa-docker"
+            },
+            {
+                id: 28,
+                title: "Brand Identity Design",
+                description: "Create compelling brand identities and visual systems.",
+                category: "Design",
+                level: "Intermediate",
+                price: 64.99,
+                rating: 4.8,
+                icon: "fas fa-paint-brush"
+            }
+        ];
+
+        // Categories data
+        const categories = [
+            {
+                name: "Development",
+                icon: "fas fa-laptop-code",
+                description: "Web development, mobile apps, programming languages",
+                count: courses.filter(course => course.category === "Development").length
+            },
+            {
+                name: "Design",
+                icon: "fas fa-paint-brush",
+                description: "Graphic design, UI/UX, photography, video editing",
+                count: courses.filter(course => course.category === "Design").length
+            },
+            {
+                name: "Business",
+                icon: "fas fa-chart-line",
+                description: "Entrepreneurship, marketing, finance, management",
+                count: courses.filter(course => course.category === "Business").length
+            },
+            {
+                name: "Data Science",
+                icon: "fas fa-calculator",
+                description: "Data analysis, machine learning, statistics",
+                count: courses.filter(course => course.category === "Data Science").length
+            }
+        ];
+
+        // DOM Elements
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const searchResultsSection = document.getElementById('search-results');
+        const searchResultsContainer = document.getElementById('search-results-container');
+        const noResultsMessage = document.getElementById('no-results-message');
+        const resultsCount = document.getElementById('results-count');
+        const allCoursesSection = document.getElementById('all-courses');
+        const categoriesContainer = document.getElementById('categories-container');
+        const categoryCoursesSection = document.getElementById('category-courses');
+        const categoryCoursesContainer = document.getElementById('category-courses-container');
+        const categoryTitle = document.getElementById('category-title');
+        const backToCoursesButton = document.getElementById('back-to-courses');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCategories();
+            renderAllCourses();
+            setupEventListeners();
+        });
+
+        // Render categories
+        function renderCategories() {
+            categoriesContainer.innerHTML = '';
+            categories.forEach(category => {
+                const categoryCard = document.createElement('div');
+                categoryCard.className = 'category-card';
+                categoryCard.dataset.category = category.name;
+                categoryCard.innerHTML = `
+                    <div class="category-icon">
+                        <i class="${category.icon}"></i>
+                    </div>
+                    <h3>${category.name}</h3>
+                    <p>${category.description}</p>
+                    <p><strong>${category.count} courses</strong></p>
+                `;
+                categoriesContainer.appendChild(categoryCard);
+            });
+        }
+
+        // Render all courses
+        function renderAllCourses() {
+            allCoursesSection.innerHTML = '';
+            courses.forEach(course => {
+                const courseCard = createCourseCard(course);
+                allCoursesSection.appendChild(courseCard);
+            });
+        }
+
+        // Render courses by category
+        function renderCoursesByCategory(categoryName) {
+            const filteredCourses = courses.filter(course => course.category === categoryName);
+            categoryCoursesContainer.innerHTML = '';
+            
+            if (filteredCourses.length > 0) {
+                filteredCourses.forEach(course => {
+                    const courseCard = createCourseCard(course);
+                    categoryCoursesContainer.appendChild(courseCard);
+                });
+                categoryTitle.textContent = `${categoryName} Courses (${filteredCourses.length})`;
+                categoryCoursesSection.style.display = 'block';
+                document.getElementById('courses').style.display = 'none';
+                document.getElementById('categories').style.display = 'none';
+            }
+        }
+
+        // Search function
+        function searchCourses(query) {
+            if (!query.trim()) {
+                searchResultsSection.style.display = 'none';
+                document.getElementById('courses').style.display = 'block';
+                document.getElementById('categories').style.display = 'block';
+                return;
+            }
+
+            const searchTerm = query.toLowerCase();
+            const filteredCourses = courses.filter(course => 
+                course.title.toLowerCase().includes(searchTerm) ||
+                course.description.toLowerCase().includes(searchTerm) ||
+                course.category.toLowerCase().includes(searchTerm)
+            );
+
+            displaySearchResults(filteredCourses, query);
+        }
+
+        // Display search results
+        function displaySearchResults(results, query) {
+            searchResultsContainer.innerHTML = '';
+            
+            if (results.length > 0) {
+                resultsCount.textContent = `Found ${results.length} course(s) for "${query}"`;
+                noResultsMessage.style.display = 'none';
+                searchResultsContainer.style.display = 'grid';
+                
+                results.forEach(course => {
+                    const courseCard = createCourseCard(course);
+                    searchResultsContainer.appendChild(courseCard);
+                });
+            } else {
+                resultsCount.textContent = `No courses found for "${query}"`;
+                noResultsMessage.style.display = 'block';
+                searchResultsContainer.style.display = 'none';
+            }
+            
+            searchResultsSection.style.display = 'block';
+            document.getElementById('courses').style.display = 'none';
+            document.getElementById('categories').style.display = 'none';
+            
+            // Scroll to results
+            searchResultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Create course card element
+        function createCourseCard(course) {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            
+            // Generate star rating
+            let stars = '';
+            const fullStars = Math.floor(course.rating);
+            const hasHalfStar = course.rating % 1 !== 0;
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            
+            card.innerHTML = `
+                <div class="course-image">
+                    <i class="${course.icon}"></i>
+                </div>
+                <div class="course-content">
+                    <span class="course-badge">${course.level}</span>
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                    <div class="course-meta">
+                        <div class="course-rating">
+                            ${stars}
+                            (${course.rating})
+                        </div>
+                        <div class="course-price">$${course.price.toFixed(2)}</div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            searchButton.addEventListener('click', function() {
+                searchCourses(searchInput.value);
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchCourses(searchInput.value);
+                }
+            });
+
+            // Category card click events
+            categoriesContainer.addEventListener('click', function(e) {
+                const categoryCard = e.target.closest('.category-card');
+                if (categoryCard) {
+                    const categoryName = categoryCard.dataset.category;
+                    renderCoursesByCategory(categoryName);
+                }
+            });
+
+            // Back to courses button
+            backToCoursesButton.addEventListener('click', function() {
+                categoryCoursesSection.style.display = 'none';
+                document.getElementById('courses').style.display = 'block';
+                document.getElementById('categories').style.display = 'block';
+            });
+
+            // Clear search when clicking on navigation links
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function() {
+                    searchInput.value = '';
+                    searchResultsSection.style.display = 'none';
+                    categoryCoursesSection.style.display = 'none';
+                    document.getElementById('courses').style.display = 'block';
+                    document.getElementById('categories').style.display = 'block';
+                });
+            });
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Button hover effects
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Course card hover effects
+            const courseCards = document.querySelectorAll('.course-card');
+            courseCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
