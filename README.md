@@ -1,2 +1,2 @@
 # portfolio_apps
-My portfolio of WEB Apps the I made
+My portfolio of WEB Apps the I've made
