@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Art Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(100, 200, 255, 0.8);
+            background: linear-gradient(45deg, #4cc9f0, #4361ee, #3a0ca3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.85;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 550px;
+            background: rgba(10, 15, 30, 0.7);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            border: 3px solid rgba(70, 130, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            padding: 25px;
+            background: rgba(20, 25, 50, 0.8);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 900px;
+            border: 2px solid rgba(70, 130, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        button {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            text-align: center;
+        }
+        
+        button:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.5);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .toggle-btn {
+            background: linear-gradient(45deg, #7209b7, #4361ee);
+        }
+        
+        .active-mode {
+            background: linear-gradient(45deg, #f72585, #b5179e);
+            box-shadow: 0 0 20px rgba(247, 37, 133, 0.7);
+            transform: translateY(-2px);
+        }
+        
+        .art-info {
+            background: rgba(20, 25, 50, 0.8);
+            padding: 25px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            border: 2px solid rgba(70, 130, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .art-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #4cc9f0;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.6);
+            font-weight: 700;
+        }
+        
+        .art-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.7;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .pattern-types {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pattern-btn {
+            background: rgba(70, 130, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(70, 130, 255, 0.4);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .pattern-btn:hover {
+            background: rgba(70, 130, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 900px;
+            background: rgba(20, 25, 50, 0.8);
+            padding: 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            border: 2px solid rgba(70, 130, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: 700;
+            color: #4cc9f0;
+            font-size: 1.4rem;
+            text-shadow: 0 0 8px rgba(76, 201, 240, 0.5);
+        }
+        
+        footer {
+            margin-top: 35px;
+            text-align: center;
+            opacity: 0.8;
+            font-size: 1rem;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .canvas-container {
+                height: 450px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .controls {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 12px;
+                padding: 20px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .canvas-container {
+                height: 350px;
+            }
+            
+            .controls {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .art-title {
+                font-size: 1.5rem;
+            }
+            
+            .art-description {
+                font-size: 1rem;
+            }
+
+            
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Generative Art Studio</h1>
+        <p class="subtitle">Explore the infinite universe of algorithmic art. Each creation is a unique journey through digital.</p>
+    </header>
+    
+    <div class="container">
+        <div class="canvas-container">
+            <canvas id="artCanvas"></canvas>
+        </div>
+        
+        <div class="controls">
+            <button id="generateBtn">New Creation</button>
+            <button id="animateBtn" class="toggle-btn">Pause Animation</button>
+            <button id="downloadBtn">Save Artwork</button>
+            <button id="spiderwebBtn">Neural Network</button>
+            <button id="neonBtn">Neon Grid</button>
+            <button id="fractalBtn">Fractal Tree</button>
+            <button id="swarmBtn">Swarm Intelligence</button>
+            <button id="waveBtn">Wave Motion</button>
+            <button id="particleBtn">Particle Storm</button>
+            <button id="geometricBtn">Geometric Morph</button>
+            <button id="energyBtn">Energy Field</button>
+            <button id="dnaBtn">DNA Helix</button>
+            <button id="monochromeBtn">Monochrome</button>
+            <button id="mouseReactBtn">Mouse React</button>
+            <button id="chaosModeBtn">Chaos Mode</button>
+            <a href="../index.html"><button>Go Back to Portfolio</button></a>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div>Elements</div>
+                <div class="stat-value" id="elementCount">0</div>
+            </div>
+            <div class="stat-item">
+                <div>Universe</div>
+                <div class="stat-value" id="currentMode">Normal</div>
+            </div>
+            <div class="stat-item">
+                <div>Stellar Speed</div>
+                <div class="stat-value" id="mouseSpeed">0</div>
+            </div>
+            <div class="stat-item">
+                <div>Spectrum</div>
+                <div class="stat-value" id="colorMode">Color</div>
+            </div>
+        </div>
+        
+        <div class="art-info">
+            <h2 class="art-title" id="artTitle">Canvas</h2>
+            <p class="art-description" id="artDescription">A mesmerizing journey through the digital art, where algorithms paint the canvas.</p>
+            <div class="pattern-types" id="patternTypes"></div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Generative Art Studio | Each artwork is a unique algorithmic art</p>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('artCanvas');
+        const ctx = canvas.getContext('2d');
+        const generateBtn = document.getElementById('generateBtn');
+        const animateBtn = document.getElementById('animateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const spiderwebBtn = document.getElementById('spiderwebBtn');
+        const neonBtn = document.getElementById('neonBtn');
+        const fractalBtn = document.getElementById('fractalBtn');
+        const swarmBtn = document.getElementById('swarmBtn');
+        const waveBtn = document.getElementById('waveBtn');
+        const particleBtn = document.getElementById('particleBtn');
+        const geometricBtn = document.getElementById('geometricBtn');
+        const energyBtn = document.getElementById('energyBtn');
+        const dnaBtn = document.getElementById('dnaBtn');
+        const monochromeBtn = document.getElementById('monochromeBtn');
+        const mouseReactBtn = document.getElementById('mouseReactBtn');
+        const chaosModeBtn = document.getElementById('chaosModeBtn');
+        const artTitle = document.getElementById('artTitle');
+        const artDescription = document.getElementById('artDescription');
+        const patternTypes = document.getElementById('patternTypes');
+        const elementCount = document.getElementById('elementCount');
+        const currentMode = document.getElementById('currentMode');
+        const mouseSpeed = document.getElementById('mouseSpeed');
+        const colorMode = document.getElementById('colorMode');
+        
+        // Animation control
+        let animationId = null;
+        let isAnimating = true;
+        let time = 0;
+        let animationMode = 'normal';
+        let isMonochrome = false;
+        let isMouseReactive = false;
+        let isChaosMode = false;
+        
+        // Mouse tracking
+        let mouseX = 0;
+        let mouseY = 0;
+        let mouseVX = 0;
+        let mouseVY = 0;
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+        
+        // Data structures for different modes
+        let animatedElements = [];
+        let nodes = [];
+        let connections = [];
+        let fractalPoints = [];
+        let swarmAgents = [];
+        let waveLines = [];
+        let particles = [];
+        let geometricShapes = [];
+        let energyPoints = [];
+        let dnaHelix = [];
+        
+        // Set canvas size
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            updateStats();
+        }
+        
+        // Mouse event handlers
+        function handleMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+            
+            // Calculate velocity
+            mouseVX = (mouseX - lastMouseX) * 0.5;
+            mouseVY = (mouseY - lastMouseY) * 0.5;
+            
+            // Update mouse speed display
+            const speed = Math.sqrt(mouseVX * mouseVX + mouseVY * mouseVY);
+            mouseSpeed.textContent = Math.round(speed);
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            generateArt();
+            animate();
+        });
+        
+        window.addEventListener('resize', resizeCanvas);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        
+        // Color functions
+        function getRandomColor() {
+            if (isMonochrome) {
+                const gray = Math.floor(Math.random() * 255);
+                return `rgb(${gray}, ${gray}, ${gray})`;
+            }
+            
+            const colors = [
+                '#4cc9f0', '#4361ee', '#3a0ca3', '#7209b7', '#f72585',
+                '#b5179e', '#560bad', '#4895ef', '#4cc9f0', '#4895ef',
+                '#3f37c9', '#480ca8', '#560bad', '#7209b7', '#b5179e'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        function getolors() {
+            if (isMonochrome) {
+                const gray = Math.floor(Math.random() * 200) + 55;
+                return `rgb(${gray}, ${gray}, ${gray})`;
+            }
+            
+            const colors = [
+                '#4cc9f0', '#4361ee', '#3a0ca3', '#7209b7', '#f72585',
+                '#ffffff', '#000000', '#b5179e', '#4895ef', '#4cc9f0'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        function getRandomGradient() {
+            if (isMonochrome) {
+                const gray1 = Math.floor(Math.random() * 100) + 20;
+                const gray2 = Math.floor(Math.random() * 100) + 120;
+                return [`rgb(${gray1}, ${gray1}, ${gray1})`, `rgb(${gray2}, ${gray2}, ${gray2})`];
+            }
+            
+            const gradients = [
+                ['#4cc9f0', '#4361ee'],
+                ['#3a0ca3', '#7209b7'],
+                ['#f72585', '#b5179e'],
+                ['#4895ef', '#4cc9f0'],
+                ['#3f37c9', '#4361ee'],
+                ['#560bad', '#7209b7']
+            ];
+            return gradients[Math.floor(Math.random() * gradients.length)];
+        }
+        
+        // Creation functions for all 10 modes
+        function createAnimatedCircles() {
+            const count = Math.floor(Math.random() * 40) + 20;
+            for (let i = 0; i < count; i++) {
+                animatedElements.push({
+                    type: 'circle',
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 30 + 10,
+                    color: getolors(),
+                    alpha: Math.random() * 0.7 + 0.1,
+                    speedX: (Math.random() - 0.5) * 3,
+                    speedY: (Math.random() - 0.5) * 3,
+                    oscSpeed: Math.random() * 0.05 + 0.01,
+                    oscPhase: Math.random() * Math.PI * 2,
+                    pulseDirection: 1,
+                    originalSpeedX: (Math.random() - 0.5) * 3,
+                    originalSpeedY: (Math.random() - 0.5) * 3,
+                    attractionX: Math.random() * canvas.width,
+                    attractionY: Math.random() * canvas.height,
+                    attractionStrength: Math.random() * 0.02
+                });
+            }
+        }
+        
+        function createAnimatedLines() {
+            const count = Math.floor(Math.random() * 30) + 15;
+            for (let i = 0; i < count; i++) {
+                animatedElements.push({
+                    type: 'line',
+                    x1: Math.random() * canvas.width,
+                    y1: Math.random() * canvas.height,
+                    x2: Math.random() * canvas.width,
+                    y2: Math.random() * canvas.height,
+                    color: getolors(),
+                    alpha: Math.random() * 0.5 + 0.1,
+                    width: Math.random() * 4 + 1,
+                    rotationSpeed: (Math.random() - 0.5) * 0.03,
+                    pulseSpeed: Math.random() * 0.05 + 0.01,
+                    originalRotationSpeed: (Math.random() - 0.5) * 0.03,
+                    centerX: (Math.random() * canvas.width),
+                    centerY: (Math.random() * canvas.height),
+                    orbitRadius: Math.random() * 100 + 50,
+                    orbitAngle: Math.random() * Math.PI * 2,
+                    orbitSpeed: (Math.random() - 0.5) * 0.05
+                });
+            }
+        }
+        
+        function createAnimatedRectangles() {
+            const count = Math.floor(Math.random() * 30) + 20;
+            for (let i = 0; i < count; i++) {
+                animatedElements.push({
+                    type: 'rectangle',
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    width: Math.random() * 100 + 30,
+                    height: Math.random() * 100 + 30,
+                    color: getolors(),
+                    alpha: Math.random() * 0.6 + 0.1,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotationSpeed: (Math.random() - 0.5) * 0.05,
+                    pulseSpeed: Math.random() * 0.08 + 0.02,
+                    originalRotationSpeed: (Math.random() - 0.5) * 0.05,
+                    waveOffset: Math.random() * Math.PI * 2
+                });
+            }
+        }
+        
+        function createAnimatedParticles() {
+            const count = Math.floor(Math.random() * 300) + 150;
+            for (let i = 0; i < count; i++) {
+                animatedElements.push({
+                    type: 'particle',
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 4 + 1,
+                    color: getolors(),
+                    alpha: Math.random() * 0.9 + 0.1,
+                    speedX: (Math.random() - 0.5) * 2,
+                    speedY: (Math.random() - 0.5) * 2,
+                    life: Math.random() * 100,
+                    lifeSpeed: Math.random() * 0.08 + 0.02,
+                    trail: [],
+                    originalSpeedX: (Math.random() - 0.5) * 2,
+                    originalSpeedY: (Math.random() - 0.5) * 2,
+                    noiseOffset: Math.random() * 1000
+                });
+            }
+        }
+        
+        function createSpiderweb() {
+            nodes = [];
+            const nodeCount = Math.floor(Math.random() * 20) + 15;
+            
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 1,
+                    vy: (Math.random() - 0.5) * 1,
+                    radius: Math.random() * 8 + 4,
+                    color: getolors(),
+                    alpha: Math.random() * 0.8 + 0.2,
+                    originalVX: (Math.random() - 0.5) * 1,
+                    originalVY: (Math.random() - 0.5) * 1,
+                    pulsePhase: Math.random() * Math.PI * 2,
+                    pulseSpeed: Math.random() * 0.05 + 0.01
+                });
+            }
+            
+            connections = [];
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < Math.min(canvas.width, canvas.height) * 0.3) {
+                        connections.push({
+                            node1: i,
+                            node2: j,
+                            alpha: Math.random() * 0.5 + 0.1,
+                            pulsePhase: Math.random() * Math.PI * 2,
+                            originalAlpha: Math.random() * 0.5 + 0.1
+                        });
+                    }
+                }
+            }
+        }
+        
+        function createNeonGrid() {
+            animatedElements = [];
+            const gridSize = 30;
+            const cols = Math.ceil(canvas.width / gridSize);
+            const rows = Math.ceil(canvas.height / gridSize);
+            
+            for (let x = 0; x < cols; x++) {
+                for (let y = 0; y < rows; y++) {
+                    animatedElements.push({
+                        type: 'gridPoint',
+                        x: x * gridSize,
+                        y: y * gridSize,
+                        originalX: x * gridSize,
+                        originalY: y * gridSize,
+                        radius: Math.random() * 3 + 1,
+                        color: getolors(),
+                        alpha: Math.random() * 0.7 + 0.3,
+                        pulseSpeed: Math.random() * 0.05 + 0.01,
+                        pulsePhase: Math.random() * Math.PI * 2,
+                        originalPulseSpeed: Math.random() * 0.05 + 0.01,
+                        waveOffset: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+        }
+        
+        function createFractalMode() {
+            fractalPoints = [];
+            const maxDepth = 5;
+            const branchFactor = 3;
+            
+            function createFractalBranch(x, y, angle, length, depth) {
+                if (depth > maxDepth) return;
+                
+                const endX = x + Math.cos(angle) * length;
+                const endY = y + Math.sin(angle) * length;
+                
+                fractalPoints.push({
+                    x1: x,
+                    y1: y,
+                    x2: endX,
+                    y2: endY,
+                    depth: depth,
+                    color: getolors(),
+                    alpha: 1 - (depth / maxDepth) * 0.7,
+                    pulsePhase: Math.random() * Math.PI * 2,
+                    rotation: angle
+                });
+                
+                for (let i = 0; i < branchFactor; i++) {
+                    const newAngle = angle + (Math.random() - 0.5) * Math.PI * 0.8;
+                    const newLength = length * (0.6 + Math.random() * 0.3);
+                    createFractalBranch(endX, endY, newAngle, newLength, depth + 1);
+                }
+            }
+            
+            for (let i = 0; i < 3; i++) {
+                createFractalBranch(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    Math.random() * Math.PI * 2,
+                    100 + Math.random() * 50,
+                    0
+                );
+            }
+        }
+        
+        function createSwarmMode() {
+            swarmAgents = [];
+            const agentCount = Math.floor(Math.random() * 100) + 150;
+            
+            for (let i = 0; i < agentCount; i++) {
+                swarmAgents.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: Math.random() * 3 + 1,
+                    color: getolors(),
+                    alpha: Math.random() * 0.8 + 0.2,
+                    trail: [],
+                    cohesion: Math.random() * 0.05 + 0.01,
+                    separation: Math.random() * 0.1 + 0.05,
+                    alignment: Math.random() * 0.05 + 0.01,
+                    noiseOffset: Math.random() * 1000
+                });
+            }
+        }
+        
+        function createWaveMode() {
+            waveLines = [];
+            const lineCount = 20;
+            const segmentCount = 30;
+            
+            for (let i = 0; i < lineCount; i++) {
+                const points = [];
+                for (let j = 0; j < segmentCount; j++) {
+                    points.push({
+                        x: (j / (segmentCount - 1)) * canvas.width,
+                        y: canvas.height / 2,
+                        originalY: canvas.height / 2,
+                        offset: Math.random() * Math.PI * 2
+                    });
+                }
+                
+                waveLines.push({
+                    points: points,
+                    color: getolors(),
+                    alpha: Math.random() * 0.6 + 0.2,
+                    amplitude: 50 + Math.random() * 100,
+                    frequency: 0.02 + Math.random() * 0.03,
+                    speed: 0.02 + Math.random() * 0.03,
+                    yOffset: (i / lineCount) * canvas.height
+                });
+            }
+        }
+        
+        function createParticleSystem() {
+            particles = [];
+            const particleCount = Math.floor(Math.random() * 500) + 300;
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    radius: Math.random() * 2 + 1,
+                    color: getolors(),
+                    alpha: Math.random() * 0.9 + 0.1,
+                    life: Math.random() * 100,
+                    lifeSpeed: Math.random() * 0.1 + 0.02,
+                    gravity: Math.random() * 0.1,
+                    friction: 0.98,
+                    trail: []
+                });
+            }
+        }
+        
+        function createGeometricMorph() {
+            geometricShapes = [];
+            const shapeCount = Math.floor(Math.random() * 15) + 10;
+            
+            for (let i = 0; i < shapeCount; i++) {
+                const sides = Math.floor(Math.random() * 5) + 3;
+                const points = [];
+                const radius = 30 + Math.random() * 50;
+                const centerX = Math.random() * canvas.width;
+                const centerY = Math.random() * canvas.height;
+                
+                for (let j = 0; j < sides; j++) {
+                    const angle = (j / sides) * Math.PI * 2;
+                    points.push({
+                        x: centerX + Math.cos(angle) * radius,
+                        y: centerY + Math.sin(angle) * radius,
+                        originalX: centerX + Math.cos(angle) * radius,
+                        originalY: centerY + Math.sin(angle) * radius
+                    });
+                }
+                
+                geometricShapes.push({
+                    points: points,
+                    color: getolors(),
+                    alpha: Math.random() * 0.7 + 0.2,
+                    rotation: 0,
+                    rotationSpeed: (Math.random() - 0.5) * 0.05,
+                    pulsePhase: Math.random() * Math.PI * 2,
+                    morphSpeed: Math.random() * 0.03 + 0.01
+                });
+            }
+        }
+        
+        function createEnergyField() {
+            energyPoints = [];
+            const pointCount = Math.floor(Math.random() * 200) + 100;
+            
+            for (let i = 0; i < pointCount; i++) {
+                energyPoints.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: Math.random() * 4 + 2,
+                    color: getolors(),
+                    alpha: Math.random() * 0.8 + 0.2,
+                    pulsePhase: Math.random() * Math.PI * 2,
+                    pulseSpeed: Math.random() * 0.05 + 0.01,
+                    connectionRadius: 50 + Math.random() * 50
+                });
+            }
+        }
+        
+        function createDNAHelix() {
+            dnaHelix = [];
+            const strandLength = 100;
+            const helixRadius = 80;
+            const helixSpacing = 20;
+            
+            for (let i = 0; i < strandLength; i++) {
+                const angle = (i / strandLength) * Math.PI * 4;
+                const y = (i / strandLength) * canvas.height;
+                
+                dnaHelix.push({
+                    x: canvas.width / 2 + Math.cos(angle) * helixRadius,
+                    y: y,
+                    originalX: canvas.width / 2 + Math.cos(angle) * helixRadius,
+                    originalY: y,
+                    radius: 3 + Math.random() * 2,
+                    color: getolors(),
+                    alpha: 0.8,
+                    pulsePhase: Math.random() * Math.PI * 2,
+                    strand: 'left'
+                });
+                
+                dnaHelix.push({
+                    x: canvas.width / 2 + Math.cos(angle + Math.PI) * helixRadius,
+                    y: y,
+                    originalX: canvas.width / 2 + Math.cos(angle + Math.PI) * helixRadius,
+                    originalY: y,
+                    radius: 3 + Math.random() * 2,
+                    color: getolors(),
+                    alpha: 0.8,
+                    pulsePhase: Math.random() * Math.PI * 2,
+                    strand: 'right'
+                });
+                
+                if (i % 5 === 0) {
+                    dnaHelix.push({
+                        x1: canvas.width / 2 + Math.cos(angle) * helixRadius,
+                        y1: y,
+                        x2: canvas.width / 2 + Math.cos(angle + Math.PI) * helixRadius,
+                        y2: y,
+                        color: getolors(),
+                        alpha: 0.3,
+                        pulsePhase: Math.random() * Math.PI * 2,
+                        type: 'connection'
+                    });
+                }
+            }
+        }
+        
+        function drawGradientBackground() {
+            const gradient = getRandomGradient();
+            const gradientObj = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradientObj.addColorStop(0, gradient[0]);
+            gradientObj.addColorStop(1, gradient[1]);
+            
+            ctx.globalAlpha = 0.15;
+            ctx.fillStyle = gradientObj;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalAlpha = 1;
+        }
+        
+        // Noise function for organic movement
+        function noise(x, y, z) {
+            return Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453 % 1;
+        }
+        
+        // Animation functions
+        function updateElements() {
+            time += 0.016;
+            
+            if (isMouseReactive) {
+                const mouseInfluenceRadius = isChaosMode ? 350 : 250;
+                const mouseVelocity = Math.sqrt(mouseVX * mouseVX + mouseVY * mouseVY);
+                
+                if (animationMode === 'normal') {
+                    animatedElements.forEach(element => {
+                        const dx = element.x - mouseX;
+                        const dy = element.y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouseInfluenceRadius) {
+                            const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                            const angleToMouse = Math.atan2(dy, dx);
+                            
+                            switch (element.type) {
+                                case 'circle':
+                                    const forceMultiplier = Math.max(0.1, Math.abs(mouseVX) + Math.abs(mouseVY)) * 0.1;
+                                    element.speedX = element.originalSpeedX + Math.cos(angleToMouse) * force * forceMultiplier * (isChaosMode ? 8 : 5);
+                                    element.speedY = element.originalSpeedY + Math.sin(angleToMouse) * force * forceMultiplier * (isChaosMode ? 8 : 5);
+                                    element.speedX += mouseVY * force * (isChaosMode ? 0.3 : 0.1);
+                                    element.speedY -= mouseVX * force * (isChaosMode ? 0.3 : 0.1);
+                                    element.alpha = 0.3 + Math.abs(Math.sin(time * 2)) * 0.7 + force * 0.5;
+                                    break;
+                                case 'line':
+                                    element.rotationSpeed = element.originalRotationSpeed + mouseVX * force * (isChaosMode ? 0.02 : 0.01);
+                                    element.alpha = 0.2 + force * 0.8;
+                                    break;
+                                case 'rectangle':
+                                    element.rotationSpeed = element.originalRotationSpeed + (mouseVX + mouseVY) * force * (isChaosMode ? 0.04 : 0.02);
+                                    element.alpha = 0.2 + force * 0.8;
+                                    break;
+                                case 'particle':
+                                    const particleForce = force * (isChaosMode ? 2 : 1);
+                                    element.speedX = element.originalSpeedX + Math.cos(angleToMouse) * particleForce * 3;
+                                    element.speedY = element.originalSpeedY + Math.sin(angleToMouse) * particleForce * 3;
+                                    element.alpha = 0.3 + Math.abs(Math.sin(element.life)) * 0.7 + particleForce * 0.4;
+                                    break;
+                            }
+                        } else {
+                            if (element.originalSpeedX !== undefined) {
+                                element.speedX = element.originalSpeedX;
+                                element.speedY = element.originalSpeedY;
+                            }
+                            if (element.originalRotationSpeed !== undefined) {
+                                element.rotationSpeed = element.originalRotationSpeed;
+                            }
+                        }
+                    });
+                } else if (animationMode === 'spiderweb') {
+                    nodes.forEach(node => {
+                        const dx = node.x - mouseX;
+                        const dy = node.y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouseInfluenceRadius) {
+                            const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                            const angleToMouse = Math.atan2(dy, dx);
+                            
+                            const forceMultiplier = Math.max(0.1, Math.abs(mouseVX) + Math.abs(mouseVY)) * 0.1;
+                            node.vx = node.originalVX + Math.cos(angleToMouse) * force * forceMultiplier * (isChaosMode ? 6 : 3);
+                            node.vy = node.originalVY + Math.sin(angleToMouse) * force * forceMultiplier * (isChaosMode ? 6 : 3);
+                            node.vx += mouseVY * force * (isChaosMode ? 0.4 : 0.2);
+                            node.vy -= mouseVX * force * (isChaosMode ? 0.4 : 0.2);
+                            node.alpha = 0.5 + force * 0.5;
+                        } else {
+                            node.vx = node.originalVX;
+                            node.vy = node.originalVY;
+                        }
+                    });
+                } else if (animationMode === 'neon') {
+                    animatedElements.forEach(element => {
+                        if (element.type === 'gridPoint') {
+                            const dx = element.x - mouseX;
+                            const dy = element.y - mouseY;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < mouseInfluenceRadius) {
+                                const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                                element.pulseSpeed = element.originalPulseSpeed + force * (isChaosMode ? 0.4 : 0.2);
+                                element.alpha = 0.5 + force * 0.5;
+                                element.originalX += mouseVX * force * (isChaosMode ? 0.2 : 0.1);
+                                element.originalY += mouseVY * force * (isChaosMode ? 0.2 : 0.1);
+                            } else {
+                                element.pulseSpeed = element.originalPulseSpeed;
+                            }
+                        }
+                    });
+                } else if (animationMode === 'fractal') {
+                    fractalPoints.forEach(point => {
+                        const dx = point.x1 - mouseX;
+                        const dy = point.y1 - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouseInfluenceRadius) {
+                            const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                            point.alpha = (1 - (point.depth / 5) * 0.7) + force * 0.5;
+                        } else {
+                            point.alpha = 1 - (point.depth / 5) * 0.7;
+                        }
+                    });
+                } else if (animationMode === 'swarm') {
+                    swarmAgents.forEach(agent => {
+                        const dx = agent.x - mouseX;
+                        const dy = agent.y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouseInfluenceRadius) {
+                            const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                            agent.vx += mouseVX * force * 0.1;
+                            agent.vy += mouseVY * force * 0.1;
+                            agent.alpha = 0.5 + force * 0.5;
+                        }
+                    });
+                } else if (animationMode === 'wave') {
+                    waveLines.forEach(line => {
+                        const dx = line.points[Math.floor(line.points.length/2)].x - mouseX;
+                        const dy = line.points[Math.floor(line.points.length/2)].y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouseInfluenceRadius) {
+                            const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                            line.alpha = 0.5 + force * 0.5;
+                            line.amplitude += force * 20;
+                        }
+                    });
+                } else if (animationMode === 'particles') {
+                    particles.forEach(particle => {
+                        const dx = particle.x - mouseX;
+                        const dy = particle.y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouseInfluenceRadius) {
+                            const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                            particle.vx += mouseVX * force * 0.2;
+                            particle.vy += mouseVY * force * 0.2;
+                            particle.alpha = 0.5 + force * 0.5;
+                        }
+                    });
+                } else if (animationMode === 'geometric') {
+                    geometricShapes.forEach(shape => {
+                        shape.points.forEach(point => {
+                            const dx = point.x - mouseX;
+                            const dy = point.y - mouseY;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < mouseInfluenceRadius) {
+                                const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                                point.x += mouseVX * force * 0.1;
+                                point.y += mouseVY * force * 0.1;
+                            }
+                        });
+                    });
+                } else if (animationMode === 'energy') {
+                    energyPoints.forEach(point => {
+                        const dx = point.x - mouseX;
+                        const dy = point.y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouseInfluenceRadius) {
+                            const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                            point.vx += mouseVX * force * 0.1;
+                            point.vy += mouseVY * force * 0.1;
+                            point.alpha = 0.5 + force * 0.5;
+                        }
+                    });
+                } else if (animationMode === 'dna') {
+                    dnaHelix.forEach(point => {
+                        if (point.type !== 'connection') {
+                            const dx = point.x - mouseX;
+                            const dy = point.y - mouseY;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < mouseInfluenceRadius) {
+                                const force = (mouseInfluenceRadius - distance) / mouseInfluenceRadius;
+                                point.x += mouseVX * force * 0.1;
+                                point.y += mouseVY * force * 0.1;
+                                point.alpha = 0.6 + force * 0.4;
+                            }
+                        }
+                    });
+                }
+            }
+            
+            if (animationMode === 'spiderweb') {
+                nodes.forEach(node => {
+                    node.x += node.vx;
+                    node.y += node.vy;
+                    
+                    if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+                    if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+                    
+                    node.x = Math.max(0, Math.min(canvas.width, node.x));
+                    node.y = Math.max(0, Math.min(canvas.height, node.y));
+                    
+                    node.radius = 6 + Math.sin(time * node.pulseSpeed + node.pulsePhase) * 3;
+                });
+                
+                connections.forEach(conn => {
+                    conn.alpha = conn.originalAlpha + Math.sin(time * 2 + conn.pulsePhase) * 0.2;
+                });
+            } else if (animationMode === 'neon') {
+                animatedElements.forEach(element => {
+                    if (element.type === 'gridPoint') {
+                        element.radius = 2 + Math.sin(time * element.pulseSpeed + element.pulsePhase) * 1.5;
+                        element.x = element.originalX + Math.sin(time * 0.5 + element.waveOffset) * 5;
+                        element.y = element.originalY + Math.cos(time * 0.5 + element.waveOffset) * 5;
+                    }
+                });
+            } else if (animationMode === 'fractal') {
+                fractalPoints.forEach(point => {
+                    point.alpha = (1 - (point.depth / 5) * 0.7) + Math.sin(time * 2 + point.pulsePhase) * 0.2;
+                });
+            } else if (animationMode === 'swarm') {
+                for (let i = 0; i < swarmAgents.length; i++) {
+                    const agent = swarmAgents[i];
+                    let cohesionX = 0, cohesionY = 0;
+                    let separationX = 0, separationY = 0;
+                    let alignmentX = 0, alignmentY = 0;
+                    let neighborCount = 0;
+                    
+                    for (let j = 0; j < swarmAgents.length; j++) {
+                        if (i === j) continue;
+                        
+                        const other = swarmAgents[j];
+                        const dx = agent.x - other.x;
+                        const dy = agent.y - other.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 50) {
+                            cohesionX += other.x;
+                            cohesionY += other.y;
+                            
+                            if (distance < 20) {
+                                separationX += dx / distance;
+                                separationY += dy / distance;
+                            }
+                            
+                            alignmentX += other.vx;
+                            alignmentY += other.vy;
+                            
+                            neighborCount++;
+                        }
+                    }
+                    
+                    if (neighborCount > 0) {
+                        cohesionX = (cohesionX / neighborCount - agent.x) * agent.cohesion;
+                        cohesionY = (cohesionY / neighborCount - agent.y) * agent.cohesion;
+                        
+                        separationX *= agent.separation;
+                        separationY *= agent.separation;
+                        
+                        alignmentX = (alignmentX / neighborCount - agent.vx) * agent.alignment;
+                        alignmentY = (alignmentY / neighborCount - agent.vy) * agent.alignment;
+                        
+                        agent.vx += cohesionX + separationX + alignmentX;
+                        agent.vy += cohesionY + separationY + alignmentY;
+                    }
+                    
+                    const noiseX = noise(agent.x * 0.01, agent.y * 0.01, time * 0.5 + agent.noiseOffset) * 0.5;
+                    const noiseY = noise(agent.y * 0.01, agent.x * 0.01, time * 0.5 + agent.noiseOffset + 100) * 0.5;
+                    
+                    agent.vx += noiseX;
+                    agent.vy += noiseY;
+                    
+                    const speed = Math.sqrt(agent.vx * agent.vx + agent.vy * agent.vy);
+                    if (speed > 3) {
+                        agent.vx = (agent.vx / speed) * 3;
+                        agent.vy = (agent.vy / speed) * 3;
+                    }
+                    
+                    agent.x += agent.vx;
+                    agent.y += agent.vy;
+                    
+                    if (agent.x < 0) agent.x = canvas.width;
+                    if (agent.x > canvas.width) agent.x = 0;
+                    if (agent.y < 0) agent.y = canvas.height;
+                    if (agent.y > canvas.height) agent.y = 0;
+                    
+                    agent.trail.push({x: agent.x, y: agent.y});
+                    if (agent.trail.length > 5) {
+                        agent.trail.shift();
+                    }
+                }
+            } else if (animationMode === 'wave') {
+                waveLines.forEach(line => {
+                    line.points.forEach((point, index) => {
+                        point.y = point.originalY + 
+                                 Math.sin(time * line.speed + point.offset + index * line.frequency) * 
+                                 line.amplitude * Math.sin(time * 0.5);
+                    });
+                });
+            } else if (animationMode === 'particles') {
+                particles.forEach(particle => {
+                    particle.vy += particle.gravity;
+                    particle.vx *= particle.friction;
+                    particle.vy *= particle.friction;
+                    
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    particle.life += particle.lifeSpeed;
+                    particle.alpha = 0.3 + Math.abs(Math.sin(particle.life)) * 0.7;
+                    
+                    if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -0.8;
+                    if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -0.8;
+                    
+                    particle.x = Math.max(0, Math.min(canvas.width, particle.x));
+                    particle.y = Math.max(0, Math.min(canvas.height, particle.y));
+                    
+                    particle.trail.push({x: particle.x, y: particle.y});
+                    if (particle.trail.length > 3) {
+                        particle.trail.shift();
+                    }
+                });
+            } else if (animationMode === 'geometric') {
+                geometricShapes.forEach(shape => {
+                    shape.rotation += shape.rotationSpeed;
+                    
+                    shape.points.forEach((point, index) => {
+                        const morphAmount = Math.sin(time * shape.morphSpeed + shape.pulsePhase + index) * 5;
+                        const angle = Math.atan2(point.originalY - canvas.height/2, point.originalX - canvas.width/2);
+                        point.x = point.originalX + Math.cos(angle) * morphAmount;
+                        point.y = point.originalY + Math.sin(angle) * morphAmount;
+                    });
+                });
+            } else if (animationMode === 'energy') {
+                energyPoints.forEach(point => {
+                    point.x += point.vx;
+                    point.y += point.vy;
+                    
+                    if (point.x < 0 || point.x > canvas.width) point.vx *= -1;
+                    if (point.y < 0 || point.y > canvas.height) point.vy *= -1;
+                    
+                    point.x = Math.max(0, Math.min(canvas.width, point.x));
+                    point.y = Math.max(0, Math.min(canvas.height, point.y));
+                    
+                    point.radius = 3 + Math.sin(time * point.pulseSpeed + point.pulsePhase) * 2;
+                });
+            } else if (animationMode === 'dna') {
+                dnaHelix.forEach(point => {
+                    if (point.type !== 'connection') {
+                        const progress = point.originalY / canvas.height;
+                        const angle = progress * Math.PI * 8 + time * 2;
+                        
+                        if (point.strand === 'left') {
+                            point.x = point.originalX + Math.cos(angle) * 20;
+                        } else {
+                            point.x = point.originalX + Math.cos(angle + Math.PI) * 20;
+                        }
+                        
+                        point.radius = 2 + Math.sin(time * 3 + point.pulsePhase) * 1.5;
+                    }
+                });
+            } else {
+                animatedElements.forEach(element => {
+                    switch (element.type) {
+                        case 'circle':
+                            element.x += element.speedX;
+                            element.y += element.speedY;
+                            
+                            if (element.x < 0 || element.x > canvas.width) element.speedX *= -1;
+                            if (element.y < 0 || element.y > canvas.height) element.speedY *= -1;
+                            
+                            const attrDx = element.attractionX - element.x;
+                            const attrDy = element.attractionY - element.y;
+                            element.speedX += attrDx * element.attractionStrength;
+                            element.speedY += attrDy * element.attractionStrength;
+                            
+                            element.radius += element.pulseDirection * 0.5;
+                            if (element.radius > 40 || element.radius < 10) {
+                                element.pulseDirection *= -1;
+                            }
+                            break;
+                            
+                        case 'line':
+                            element.orbitAngle += element.orbitSpeed;
+                            element.centerX += Math.sin(time * 0.2) * 0.5;
+                            element.centerY += Math.cos(time * 0.2) * 0.5;
+                            element.x1 = element.centerX + Math.cos(element.orbitAngle) * element.orbitRadius;
+                            element.y1 = element.centerY + Math.sin(element.orbitAngle) * element.orbitRadius;
+                            element.x2 = element.centerX + Math.cos(element.orbitAngle + Math.PI) * element.orbitRadius;
+                            element.y2 = element.centerY + Math.sin(element.orbitAngle + Math.PI) * element.orbitRadius;
+                            
+                            element.width = 2 + Math.abs(Math.sin(time * element.pulseSpeed)) * 3;
+                            break;
+                            
+                        case 'rectangle':
+                            element.x += Math.sin(time * 0.5 + element.waveOffset) * 2;
+                            element.y += Math.cos(time * 0.5 + element.waveOffset) * 2;
+                            element.rotation += element.rotationSpeed;
+                            element.width = 60 + Math.sin(time * element.pulseSpeed) * 30;
+                            element.height = 60 + Math.cos(time * element.pulseSpeed) * 30;
+                            break;
+                            
+                        case 'particle':
+                            const noiseX = noise(element.x * 0.01, element.y * 0.01, time * 0.5 + element.noiseOffset) * 0.5;
+                            const noiseY = noise(element.y * 0.01, element.x * 0.01, time * 0.5 + element.noiseOffset + 100) * 0.5;
+                            
+                            element.x += element.speedX + noiseX;
+                            element.y += element.speedY + noiseY;
+                            element.life += element.lifeSpeed;
+                            element.alpha = 0.3 + Math.abs(Math.sin(element.life)) * 0.7;
+                            
+                            element.trail.push({x: element.x, y: element.y});
+                            if (element.trail.length > 10) {
+                                element.trail.shift();
+                            }
+                            
+                            if (element.x < 0) element.x = canvas.width;
+                            if (element.x > canvas.width) element.x = 0;
+                            if (element.y < 0) element.y = canvas.height;
+                            if (element.y > canvas.height) element.y = 0;
+                            break;
+                            
+                        case 'gridPoint':
+                            element.radius = 2 + Math.sin(time * element.pulseSpeed + element.pulsePhase) * 1.5;
+                            element.x = element.originalX + Math.sin(time * 0.5 + element.pulsePhase) * 5;
+                            element.y = element.originalY + Math.cos(time * 0.5 + element.pulsePhase) * 5;
+                            break;
+                    }
+                });
+            }
+        }
+        
+        function drawElements() {
+            if (animationMode === 'spiderweb') {
+                connections.forEach(conn => {
+                    const node1 = nodes[conn.node1];
+                    const node2 = nodes[conn.node2];
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(node1.x, node1.y);
+                    ctx.lineTo(node2.x, node2.y);
+                    
+                    if (isMonochrome) {
+                        ctx.strokeStyle = 'rgba(200, 200, 200, ' + conn.alpha + ')';
+                    } else {
+                        ctx.strokeStyle = 'rgba(76, 201, 240, ' + conn.alpha + ')';
+                    }
+                    
+                    ctx.lineWidth = isChaosMode ? 2 : 1;
+                    ctx.stroke();
+                });
+                
+                nodes.forEach(node => {
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = node.color;
+                    ctx.globalAlpha = node.alpha;
+                    ctx.fill();
+                    
+                    if (!isMonochrome) {
+                        ctx.shadowColor = node.color;
+                        ctx.shadowBlur = isChaosMode ? 25 : 15;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else if (animationMode === 'neon') {
+                animatedElements.forEach(element => {
+                    if (element.type === 'gridPoint') {
+                        ctx.beginPath();
+                        ctx.arc(element.x, element.y, element.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = element.color;
+                        ctx.globalAlpha = element.alpha;
+                        
+                        if (!isMonochrome) {
+                            ctx.shadowColor = element.color;
+                            ctx.shadowBlur = isChaosMode ? 20 : 10;
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        } else {
+                            ctx.fill();
+                        }
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else if (animationMode === 'fractal') {
+                fractalPoints.forEach(point => {
+                    ctx.beginPath();
+                    ctx.moveTo(point.x1, point.y1);
+                    ctx.lineTo(point.x2, point.y2);
+                    ctx.strokeStyle = point.color;
+                    ctx.globalAlpha = point.alpha;
+                    ctx.lineWidth = Math.max(1, 5 - point.depth);
+                    
+                    if (!isMonochrome) {
+                        ctx.shadowColor = point.color;
+                        ctx.shadowBlur = isChaosMode ? 15 : 8;
+                        ctx.stroke();
+                        ctx.shadowBlur = 0;
+                    } else {
+                        ctx.stroke();
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else if (animationMode === 'swarm') {
+                swarmAgents.forEach(agent => {
+                    if (agent.trail.length > 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(agent.trail[0].x, agent.trail[0].y);
+                        for (let i = 1; i < agent.trail.length; i++) {
+                            ctx.lineTo(agent.trail[i].x, agent.trail[i].y);
+                        }
+                        ctx.strokeStyle = agent.color;
+                        ctx.lineWidth = 1;
+                        ctx.globalAlpha = agent.alpha * 0.3;
+                        ctx.stroke();
+                    }
+                    
+                    ctx.beginPath();
+                    ctx.arc(agent.x, agent.y, agent.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = agent.color;
+                    ctx.globalAlpha = agent.alpha;
+                    
+                    if (!isMonochrome) {
+                        ctx.shadowColor = agent.color;
+                        ctx.shadowBlur = isChaosMode ? 10 : 5;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    } else {
+                        ctx.fill();
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else if (animationMode === 'wave') {
+                waveLines.forEach(line => {
+                    ctx.beginPath();
+                    ctx.moveTo(line.points[0].x, line.points[0].y);
+                    for (let i = 1; i < line.points.length; i++) {
+                        ctx.lineTo(line.points[i].x, line.points[i].y);
+                    }
+                    ctx.strokeStyle = line.color;
+                    ctx.globalAlpha = line.alpha;
+                    ctx.lineWidth = isChaosMode ? 3 : 2;
+                    
+                    if (!isMonochrome) {
+                        ctx.shadowColor = line.color;
+                        ctx.shadowBlur = isChaosMode ? 15 : 8;
+                        ctx.stroke();
+                        ctx.shadowBlur = 0;
+                    } else {
+                        ctx.stroke();
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else if (animationMode === 'particles') {
+                particles.forEach(particle => {
+                    if (particle.trail.length > 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(particle.trail[0].x, particle.trail[0].y);
+                        for (let i = 1; i < particle.trail.length; i++) {
+                            ctx.lineTo(particle.trail[i].x, particle.trail[i].y);
+                        }
+                        ctx.strokeStyle = particle.color;
+                        ctx.lineWidth = 1;
+                        ctx.globalAlpha = particle.alpha * 0.5;
+                        ctx.stroke();
+                    }
+                    
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.globalAlpha = particle.alpha;
+                    
+                    if (!isMonochrome) {
+                        ctx.shadowColor = particle.color;
+                        ctx.shadowBlur = isChaosMode ? 8 : 4;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    } else {
+                        ctx.fill();
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else if (animationMode === 'geometric') {
+                geometricShapes.forEach(shape => {
+                    ctx.beginPath();
+                    ctx.moveTo(shape.points[0].x, shape.points[0].y);
+                    for (let i = 1; i < shape.points.length; i++) {
+                        ctx.lineTo(shape.points[i].x, shape.points[i].y);
+                    }
+                    ctx.closePath();
+                    ctx.fillStyle = shape.color;
+                    ctx.globalAlpha = shape.alpha;
+                    
+                    if (!isMonochrome) {
+                        ctx.shadowColor = shape.color;
+                        ctx.shadowBlur = isChaosMode ? 15 : 8;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    } else {
+                        ctx.fill();
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else if (animationMode === 'energy') {
+                for (let i = 0; i < energyPoints.length; i++) {
+                    for (let j = i + 1; j < energyPoints.length; j++) {
+                        const point1 = energyPoints[i];
+                        const point2 = energyPoints[j];
+                        const dx = point1.x - point2.x;
+                        const dy = point1.y - point2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < point1.connectionRadius) {
+                            ctx.beginPath();
+                            ctx.moveTo(point1.x, point1.y);
+                            ctx.lineTo(point2.x, point2.y);
+                            ctx.strokeStyle = point1.color;
+                            ctx.globalAlpha = (1 - distance / point1.connectionRadius) * 0.2;
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                energyPoints.forEach(point => {
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = point.color;
+                    ctx.globalAlpha = point.alpha;
+                    
+                    if (!isMonochrome) {
+                        ctx.shadowColor = point.color;
+                        ctx.shadowBlur = isChaosMode ? 12 : 6;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    } else {
+                        ctx.fill();
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else if (animationMode === 'dna') {
+                dnaHelix.forEach(point => {
+                    if (point.type === 'connection') {
+                        ctx.beginPath();
+                        ctx.moveTo(point.x1, point.y1);
+                        ctx.lineTo(point.x2, point.y2);
+                        ctx.strokeStyle = point.color;
+                        ctx.globalAlpha = point.alpha + Math.sin(time * 3 + point.pulsePhase) * 0.2;
+                        ctx.lineWidth = 1;
+                        
+                        if (!isMonochrome) {
+                            ctx.shadowColor = point.color;
+                            ctx.shadowBlur = isChaosMode ? 8 : 4;
+                            ctx.stroke();
+                            ctx.shadowBlur = 0;
+                        } else {
+                            ctx.stroke();
+                        }
+                    }
+                });
+                
+                dnaHelix.forEach(point => {
+                    if (point.type !== 'connection') {
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = point.color;
+                        ctx.globalAlpha = point.alpha;
+                        
+                        if (!isMonochrome) {
+                            ctx.shadowColor = point.color;
+                            ctx.shadowBlur = isChaosMode ? 10 : 5;
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        } else {
+                            ctx.fill();
+                        }
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            } else {
+                animatedElements.forEach(element => {
+                    ctx.globalAlpha = element.alpha;
+                    
+                    switch (element.type) {
+                        case 'circle':
+                            ctx.beginPath();
+                            ctx.arc(element.x, element.y, element.radius, 0, Math.PI * 2);
+                            ctx.fillStyle = element.color;
+                            
+                            if (!isMonochrome) {
+                                ctx.shadowColor = element.color;
+                                ctx.shadowBlur = isChaosMode ? 25 : 15;
+                                ctx.fill();
+                                ctx.shadowBlur = 0;
+                            } else {
+                                ctx.fill();
+                            }
+                            break;
+                            
+                        case 'line':
+                            ctx.beginPath();
+                            ctx.moveTo(element.x1, element.y1);
+                            ctx.lineTo(element.x2, element.y2);
+                            ctx.strokeStyle = element.color;
+                            ctx.lineWidth = element.width;
+                            
+                            if (!isMonochrome) {
+                                ctx.shadowColor = element.color;
+                                ctx.shadowBlur = isChaosMode ? 15 : 10;
+                                ctx.stroke();
+                                ctx.shadowBlur = 0;
+                            } else {
+                                ctx.stroke();
+                            }
+                            break;
+                            
+                        case 'rectangle':
+                            ctx.save();
+                            ctx.translate(element.x, element.y);
+                            ctx.rotate(element.rotation);
+                            ctx.fillStyle = element.color;
+                            
+                            if (!isMonochrome) {
+                                ctx.shadowColor = element.color;
+                                ctx.shadowBlur = isChaosMode ? 25 : 15;
+                                ctx.fillRect(-element.width/2, -element.height/2, element.width, element.height);
+                                ctx.shadowBlur = 0;
+                            } else {
+                                ctx.fillRect(-element.width/2, -element.height/2, element.width, element.height);
+                            }
+                            ctx.restore();
+                            break;
+                            
+                        case 'particle':
+                            if (element.trail.length > 1) {
+                                ctx.beginPath();
+                                ctx.moveTo(element.trail[0].x, element.trail[0].y);
+                                for (let i = 1; i < element.trail.length; i++) {
+                                    ctx.lineTo(element.trail[i].x, element.trail[i].y);
+                                }
+                                ctx.strokeStyle = element.color;
+                                ctx.lineWidth = isChaosMode ? 3 : 2;
+                                ctx.globalAlpha = element.alpha * 0.5;
+                                ctx.stroke();
+                            }
+                            
+                            ctx.beginPath();
+                            ctx.arc(element.x, element.y, element.radius, 0, Math.PI * 2);
+                            ctx.fillStyle = element.color;
+                            ctx.globalAlpha = element.alpha;
+                            
+                            if (!isMonochrome) {
+                                ctx.shadowColor = element.color;
+                                ctx.shadowBlur = isChaosMode ? 12 : 8;
+                                ctx.fill();
+                                ctx.shadowBlur = 0;
+                            } else {
+                                ctx.fill();
+                            }
+                            break;
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+            }
+        }
+        
+        // Artwork titles and descriptions
+        const artTitles = [
+            "Stellar Nebula", "Web", "Quantum Field", "Galactic Storm",
+            "Nebula Waves", "Digital", "Particle Universe", "Geometric Stars",
+            "Energy Vortex", "Helix Galaxy", "Fractal Space", "Neural",
+            "Swarm Constellation", "Wave Dimensions", "Morphing Universe", "Field Harmony"
+        ];
+        
+        const artDescriptions = [
+            "A swirling nebula of energy pulses through the digital void.",
+            "Interconnected nodes form a vast network of stellar intelligence.",
+            "Quantum particles dance in superposition across the infinite canvas.",
+            "A tempest of stellar fragments creates mesmerizing patterns.",
+            "Waves of energy ripple through the fabric of digital space-time.",
+            "Explore the infinite expanse of algorithmically generated.",
+            "Thousands of particles form emergent patterns in stellar chaos.",
+            "Geometric forms morph and evolve in the dance of mathematics.",
+            "Energetic fields connect points of light in complex universal networks.",
+            "Double helix structures spiral through the digital realm.",
+            "Recursive patterns unfold infinitely in mathematical beauty.",
+            "Neural networks pulse with artificial consciousness.",
+            "Intelligent agents form constellations in coordinated harmony.",
+            "Rhythmic waves flow through dimensional space in perfect motion.",
+            "Shapes transform and evolve in the dance of algorithms.",
+            "Harmonic fields create balance in the universal digital ecosystem."
+        ];
+        
+        const patternTypesList = [
+            "Stellar Particles", "Waves", "Quantum Lines", "Nebula Circles",
+            "Galactic Grid", "Neural Links", "Fractal Branches", "Swarm Patterns",
+            "Energy Fields", "Helix Structures", "Geometric Morphs", "Particle Storms",
+            "Wave Interference", "Field Connections", "Constellation Nodes", "Digital Orbits"
+        ];
+        
+        function getRandomTitle() {
+            return artTitles[Math.floor(Math.random() * artTitles.length)];
+        }
+        
+        function getRandomDescription() {
+            return artDescriptions[Math.floor(Math.random() * artDescriptions.length)];
+        }
+        
+        function getRandomPatternTypes() {
+            const count = Math.floor(Math.random() * 4) + 2;
+            const types = [];
+            const availableTypes = [...patternTypesList];
+            
+            for (let i = 0; i < count; i++) {
+                const randomIndex = Math.floor(Math.random() * availableTypes.length);
+                types.push(availableTypes[randomIndex]);
+                availableTypes.splice(randomIndex, 1);
+            }
+            
+            return types;
+        }
+        
+        function updateArtInfo() {
+            artTitle.textContent = getRandomTitle();
+            artDescription.textContent = getRandomDescription();
+            
+            patternTypes.innerHTML = '';
+            const types = getRandomPatternTypes();
+            types.forEach(type => {
+                const span = document.createElement('span');
+                span.className = 'pattern-btn';
+                span.textContent = type;
+                patternTypes.appendChild(span);
+            });
+        }
+        
+        function updateStats() {
+            let count = 0;
+            switch (animationMode) {
+                case 'normal': count = animatedElements.length; break;
+                case 'spiderweb': count = nodes.length + connections.length; break;
+                case 'neon': count = animatedElements.length; break;
+                case 'fractal': count = fractalPoints.length; break;
+                case 'swarm': count = swarmAgents.length; break;
+                case 'wave': count = waveLines.length; break;
+                case 'particles': count = particles.length; break;
+                case 'geometric': count = geometricShapes.length; break;
+                case 'energy': count = energyPoints.length; break;
+                case 'dna': count = dnaHelix.length; break;
+            }
+            elementCount.textContent = count;
+            
+            currentMode.textContent = animationMode.charAt(0).toUpperCase() + animationMode.slice(1);
+            colorMode.textContent = isMonochrome ? 'Monochrome' : 'Color';
+        }
+        
+        function generateArt() {
+            animationMode = 'normal';
+            animateBtn.textContent = 'Pause Animation';
+            isAnimating = true;
+            
+            animatedElements = [];
+            nodes = [];
+            connections = [];
+            fractalPoints = [];
+            swarmAgents = [];
+            waveLines = [];
+            particles = [];
+            geometricShapes = [];
+            energyPoints = [];
+            dnaHelix = [];
+            
+            drawGradientBackground();
+            
+            const functions = [
+                createAnimatedCircles,
+                createAnimatedLines,
+                createAnimatedRectangles,
+                createAnimatedParticles
+            ];
+            
+            for (let i = functions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [functions[i], functions[j]] = [functions[j], functions[i]];
+            }
+            
+            const count = Math.floor(Math.random() * 2) + 2;
+            for (let i = 0; i < count; i++) {
+                functions[i]();
+            }
+            
+            updateArtInfo();
+            updateStats();
+            
+            [spiderwebBtn, neonBtn, fractalBtn, swarmBtn, waveBtn, particleBtn, geometricBtn, energyBtn, dnaBtn].forEach(btn => {
+                btn.classList.remove('active-mode');
+            });
+        }
+        
+        function clearAllData() {
+            animatedElements = [];
+            nodes = [];
+            connections = [];
+            fractalPoints = [];
+            swarmAgents = [];
+            waveLines = [];
+            particles = [];
+            geometricShapes = [];
+            energyPoints = [];
+            dnaHelix = [];
+        }
+        
+        function updatePatternTypes(types) {
+            patternTypes.innerHTML = '';
+            types.forEach(type => {
+                const span = document.createElement('span');
+                span.className = 'pattern-btn';
+                span.textContent = type;
+                patternTypes.appendChild(span);
+            });
+        }
+        
+        function updateButtonStates(activeBtn) {
+            [spiderwebBtn, neonBtn, fractalBtn, swarmBtn, waveBtn, particleBtn, geometricBtn, energyBtn, dnaBtn].forEach(btn => {
+                btn.classList.remove('active-mode');
+            });
+            activeBtn.classList.add('active-mode');
+            updateStats();
+        }
+        
+        // Mode activation functions
+        function activateSpiderwebMode() {
+            animationMode = 'spiderweb';
+            clearAllData();
+            createSpiderweb();
+            artTitle.textContent = "Neural";
+            artDescription.textContent = "A vast network of interconnected stellar nodes pulsing with intelligence.";
+            updatePatternTypes(['Neural Network', 'Web', 'Stellar Links', 'Galactic Connections', 'Universal Mind']);
+            updateButtonStates(spiderwebBtn);
+        }
+        
+        function activateNeonMode() {
+            animationMode = 'neon';
+            clearAllData();
+            createNeonGrid();
+            artTitle.textContent = "Neon Grid";
+            artDescription.textContent = "A luminous grid of pulsing lights creates a futuristic digital landscape.";
+            updatePatternTypes(['Neon Matrix', 'Pulsing Grid', 'Digital Lights', 'Luminous Network', 'Energy Grid']);
+            updateButtonStates(neonBtn);
+        }
+        
+        function activateFractalMode() {
+            animationMode = 'fractal';
+            clearAllData();
+            createFractalMode();
+            artTitle.textContent = "Fractal Space";
+            artDescription.textContent = "Recursive patterns unfold infinitely in this mathematical marvel of art.";
+            updatePatternTypes(['Recursive Branches', 'Self-Similar Forms', 'Infinite Detail', 'Mathematical Beauty', 'Natural Patterns']);
+            updateButtonStates(fractalBtn);
+        }
+        
+        function activateSwarmMode() {
+            animationMode = 'swarm';
+            clearAllData();
+            createSwarmMode();
+            artTitle.textContent = "Swarm Constellation";
+            artDescription.textContent = "Thousands of intelligent agents move in coordinated harmony, creating emergent patterns.";
+            updatePatternTypes(['Flocking Behavior', 'Emergent Patterns', 'Collective Intelligence', 'Swarm Dynamics', 'Agent-Based System']);
+            updateButtonStates(swarmBtn);
+        }
+        
+        function activateWaveMode() {
+            animationMode = 'wave';
+            clearAllData();
+            createWaveMode();
+            artTitle.textContent = "Wave Dimensions";
+            artDescription.textContent = "Rhythmic waves flow through dimensional space in perfect harmonic motion.";
+            updatePatternTypes(['Harmonic Waves', 'Fluid Dynamics', 'Ripple Effect', 'Wave Interference', 'Ocean Simulation']);
+            updateButtonStates(waveBtn);
+        }
+        
+        function activateParticleMode() {
+            animationMode = 'particles';
+            clearAllData();
+            createParticleSystem();
+            artTitle.textContent = "Particle Universe";
+            artDescription.textContent = "Dynamic particle systems create mesmerizing visual phenomena and emergent behaviors.";
+            updatePatternTypes(['Particle Fountain', 'Emission Streams', 'Gravity Wells', 'Collision Effects', 'Trail Systems']);
+            updateButtonStates(particleBtn);
+        }
+        
+        function activateGeometricMode() {
+            animationMode = 'geometric';
+            clearAllData();
+            createGeometricMorph();
+            artTitle.textContent = "Geometric Morph";
+            artDescription.textContent = "Morphing geometric shapes transform and evolve in real-time mathematical beauty.";
+            updatePatternTypes(['Shape Shifting', 'Morphing Polygons', 'Geometric Dance', 'Angular Harmony', 'Polygonal Flow']);
+            updateButtonStates(geometricBtn);
+        }
+        
+        function activateEnergyMode() {
+            animationMode = 'energy';
+            clearAllData();
+            createEnergyField();
+            artTitle.textContent = "Energy Field";
+            artDescription.textContent = "Energetic fields connect points of light in complex, dynamic networks of force.";
+            updatePatternTypes(['Energy Nexus', 'Force Fields', 'Electric Connections', 'Power Grid', 'Energy Streams']);
+            updateButtonStates(energyBtn);
+        }
+        
+        function activateDNAMode() {
+            animationMode = 'dna';
+            clearAllData();
+            createDNAHelix();
+            artTitle.textContent = "DNA Helix";
+            artDescription.textContent = "Double helix structures spiral through digital space in biological algorithmic beauty.";
+            updatePatternTypes(['Genetic Code', 'Double Helix', 'Molecular Structure', 'Biological Algorithm', 'Life Pattern']);
+            updateButtonStates(dnaBtn);
+        }
+        
+        function toggleMonochromeMode() {
+            isMonochrome = !isMonochrome;
+            monochromeBtn.classList.toggle('active-mode', isMonochrome);
+            monochromeBtn.textContent = isMonochrome ? 'Color Spectrum' : 'Monochrome';
+            
+            const allData = [animatedElements, nodes, fractalPoints, swarmAgents, waveLines, particles, geometricShapes, energyPoints, dnaHelix];
+            allData.forEach(dataArray => {
+                dataArray.forEach(item => {
+                    if (item.color) item.color = getolors();
+                    if (item.points) {
+                        item.points.forEach(point => {
+                            if (point.color) point.color = getolors();
+                        });
+                    }
+                });
+            });
+            
+            updateStats();
+        }
+        
+        function toggleMouseReactivity() {
+            isMouseReactive = !isMouseReactive;
+            mouseReactBtn.classList.toggle('active-mode', isMouseReactive);
+            mouseReactBtn.textContent = isMouseReactive ? 'Disable Interaction' : 'Mouse Reactivity';
+        }
+        
+        function toggleChaosMode() {
+            isChaosMode = !isChaosMode;
+            chaosModeBtn.classList.toggle('active-mode', isChaosMode);
+            chaosModeBtn.textContent = isChaosMode ? 'Calm Mode' : 'Chaos Mode';
+        }
+        
+        function animate() {
+            if (isAnimating) {
+                const clearAlpha = isChaosMode ? 0.1 : (animationMode === 'spiderweb' || animationMode === 'neon' ? 0.1 : 0.05);
+                ctx.fillStyle = isMonochrome ? `rgba(10, 15, 30, ${clearAlpha})` : `rgba(10, 15, 30, ${clearAlpha})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                updateElements();
+                drawElements();
+            }
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        function downloadArt() {
+            const link = document.createElement('a');
+            link.download = `${artTitle.textContent.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+            animateBtn.textContent = isAnimating ? 'Pause Animation' : 'Resume Animation';
+        }
+        
+        // Event listeners
+        generateBtn.addEventListener('click', generateArt);
+        animateBtn.addEventListener('click', toggleAnimation);
+        downloadBtn.addEventListener('click', downloadArt);
+        spiderwebBtn.addEventListener('click', activateSpiderwebMode);
+        neonBtn.addEventListener('click', activateNeonMode);
+        fractalBtn.addEventListener('click', activateFractalMode);
+        swarmBtn.addEventListener('click', activateSwarmMode);
+        waveBtn.addEventListener('click', activateWaveMode);
+        particleBtn.addEventListener('click', activateParticleMode);
+        geometricBtn.addEventListener('click', activateGeometricMode);
+        energyBtn.addEventListener('click', activateEnergyMode);
+        dnaBtn.addEventListener('click', activateDNAMode);
+        monochromeBtn.addEventListener('click', toggleMonochromeMode);
+        mouseReactBtn.addEventListener('click', toggleMouseReactivity);
+        chaosModeBtn.addEventListener('click', toggleChaosMode);
+    </script>
+</body>
+</html>
